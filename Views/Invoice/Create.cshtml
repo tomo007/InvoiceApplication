@@ -53,14 +53,17 @@
             <table>
                 <tr>
                     @{
+
                         int cnt = 0;
                         List<InvoiceApplication.Models.ProductOnList> products = ViewBag.Products;
 
                         foreach (var product in products)
                         {
-                            if (cnt++ % 3 != 0)
+                            if (cnt++ % 4 != 0)
                             {
-                            @:</tr><tr>
+                            @:</tr>
+                               
+                            @:<tr>
                             }
                             @:<td>
                                 <input type="checkbox"
@@ -69,14 +72,13 @@
                                        @(Html.Raw(product.Assigned ? "checked=\"checked\"" : "")) />
                                 @product.Name
                             @:</td>
-                            <td>
-                            <input type="number"
-                                   name"quantity"                                  
-                                   value="@product.Quantity"/>
-                            
-                            </td>
+                            @: <td>
+                                <input type="number"
+                                       name="quantity"
+                                       value="@product.Quantity">
 
-                    }
+                            @: </td>
+                        }
                     @:</tr>
                     }
                 </table>

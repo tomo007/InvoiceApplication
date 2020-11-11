@@ -1,31 +1,24 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Runtime.Remoting.Contexts;
 using System.Web;
 using System.Web.Mvc;
 using InvoiceApplication.DAL;
-using InvoiceApplication.Interface;
-using InvoiceApplication.MEF_Export;
 using InvoiceApplication.Models;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNetCore.Identity;
 
 namespace InvoiceApplication.Controllers
 {
-
+    [Authorize]
     public class InvoiceController : Controller
+
     {
-        [Import(typeof(ITax))]
-        ITax tax;
+
         private InvoiceContext db = new InvoiceContext();
         protected ApplicationDbContext ApplicationDbContext { get; set; }
         protected Microsoft.AspNet.Identity.UserManager<ApplicationUser> UserManager { get; set; }
@@ -68,7 +61,7 @@ namespace InvoiceApplication.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "InvoiceID,NumberOf,CreateDate,BillingDeadline,TotalPrice,TotalPriceWithTax,Buyer,Quantity")] Invoice invoice,string[] selectedProducts)
+        public ActionResult Create([Bind(Include = "InvoiceID,NumberOf,CreateDate,BillingDeadline,TotalPrice,TotalPriceWithTax,Buyer,Quantity")] Invoice invoice,string[] selectedProducts,string[] quantity)
         {
             if (selectedProducts != null)
             {
@@ -78,7 +71,9 @@ namespace InvoiceApplication.Controllers
                 foreach (var product in selectedProducts)
                 {
                     var productToAdd = db.Products.Find(int.Parse(product));
-                        invoice.Products.Add(productToAdd);
+                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID-1]);
+                    productToAdd.TotalPrice = productToAdd.Quantity * productToAdd.Price;
+                    invoice.Products.Add(productToAdd);
                 }
             }
 
@@ -98,7 +93,7 @@ namespace InvoiceApplication.Controllers
                     }
                 }
                 
-                invoice.TotalPriceWithTax =tax.CalculateTax("HR", invoice.TotalPrice);
+               // invoice.TotalPriceWithTax =this.CalculateTax("Hr", invoice.TotalPrice);
                 PopulateProductOnListData(invoice);
                 db.Invoices.Add(invoice);
                 db.SaveChanges();

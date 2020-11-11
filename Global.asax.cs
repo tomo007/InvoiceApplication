@@ -1,3 +1,4 @@
+
 using InvoiceApplication.MEF_Export;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,5 @@ namespace InvoiceApplication
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
-      
-        
     }
 }

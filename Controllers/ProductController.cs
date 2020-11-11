@@ -11,6 +11,7 @@ using InvoiceApplication.Models;
 
 namespace InvoiceApplication.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private InvoiceContext db = new InvoiceContext();

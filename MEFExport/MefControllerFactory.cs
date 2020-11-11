@@ -21,8 +21,6 @@ namespace InvoiceApplication.MEF_Export
             var path = AppDomain.CurrentDomain.BaseDirectory;
             catalog.Catalogs.Add(new DirectoryCatalog(path + "MEFExport"));
             catalog.Catalogs.Add(new DirectoryCatalog(path + "Controllers"));
-
-
             _container = new CompositionContainer(catalog);
 
         }
