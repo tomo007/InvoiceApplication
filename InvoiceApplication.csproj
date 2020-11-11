@@ -239,11 +239,11 @@
     <Compile Include="Interface\IOperation.cs" />
     <Compile Include="Interface\IOperationData.cs" />
     <Compile Include="Interface\ITax.cs" />
-    <Compile Include="MEF Export\BiHTax.cs" />
-    <Compile Include="MEF Export\HRTax.cs" />
-    <Compile Include="MEF Export\MefControllerFactory.cs" />
-    <Compile Include="MEF Export\SrbTax.cs" />
-    <Compile Include="MEF Export\TaxCalculate.cs" />
+    <Compile Include="MEFExport\BiHTax.cs" />
+    <Compile Include="MEFExport\HRTax.cs" />
+    <Compile Include="MEFExport\MefControllerFactory.cs" />
+    <Compile Include="MEFExport\SrbTax.cs" />
+    <Compile Include="MEFExport\TaxCalculate.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Invoice.cs" />

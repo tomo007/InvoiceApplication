@@ -17,10 +17,10 @@ namespace InvoiceApplication
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            ControllerBuilder.Current.SetControllerFactory(typeof(MEFControllerFactory));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            ControllerBuilder.Current.SetControllerFactory(new MefControllerFactory(Assembly.GetExecutingAssembly()));
         }
 
       

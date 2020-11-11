@@ -21,19 +21,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace InvoiceApplication.Controllers
 {
-    [Export(typeof(MefControllerFactory))]
+
     public class InvoiceController : Controller
     {
+        [Import(typeof(ITax))]
+        ITax tax;
         private InvoiceContext db = new InvoiceContext();
         protected ApplicationDbContext ApplicationDbContext { get; set; }
         protected Microsoft.AspNet.Identity.UserManager<ApplicationUser> UserManager { get; set; }
 
 
-        [Import(typeof(ITax))]
-        ITax tax;
-
-        // GET: Invoice
-      
         public ActionResult Index()
         {
           
@@ -100,8 +97,8 @@ namespace InvoiceApplication.Controllers
                         invoice.TotalPrice += product.TotalPrice;
                     }
                 }
-                tax = new TaxCalculate();
-                invoice.TotalPriceWithTax = this.tax.CalculateTax("HR", invoice.TotalPrice);
+                
+                invoice.TotalPriceWithTax =tax.CalculateTax("HR", invoice.TotalPrice);
                 PopulateProductOnListData(invoice);
                 db.Invoices.Add(invoice);
                 db.SaveChanges();
