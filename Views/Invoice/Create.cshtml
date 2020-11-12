@@ -23,15 +23,6 @@
         </div>
     </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.CreateDate, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-
 
     <div class="form-group">
         @Html.LabelFor(model => model.BillingDeadline, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -48,47 +39,60 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-md-2">Drzava</label>
+        <label class="control-label col-md-2">Country</label>
         <div class="col-md-10">
-            @Html.DropDownList("drzava", new SelectList((List<string>)ViewBag.Drzave), new { @class = "form-control" })
+            @Html.DropDownList("country", new SelectList((List<string>)ViewBag.Countries), new { @class = "form-control" })
         </div>
     </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <table >
-                
+            <table>
+                <tr>
                     @{
-
                         int cnt = 0;
                         List<InvoiceApplication.Models.ProductOnList> products = ViewBag.Products;
-
-                        foreach (var product in products)
+                        if (products != null)
                         {
-                            
-                                    @:<tr style="margin:2.5em" >
-                                        @:
-                                          @:<td>
-                                              <input type="checkbox"
-                                                     name="selectedProducts"
-                                                     value="@product.InvoiceID"
-                                                     @(Html.Raw(product.Assigned ? "checked=\"checked\"" : "")) />
-                                             @: <strong>@product.Name</strong>
-
-                                             
-                                          @:</td>
-                                    @:</tr>
-                                    @:<tr style="margin:2.5em" >
-                                        @:<td >
-                                            <p>Quantity</p>
-                                            <input type="number"
-                                            name="quantity"
-                                            value="0" >
-                                        @:</td>
-                                    @:</tr>
-                                  
+                            foreach (var product in products)
+                            {
+                                if (cnt++ % 2 == 0)
+                                {
+                            @:</tr><tr>
+                                @:<td>
+                                    <input type="checkbox"
+                                           name="selectedProducts"
+                                           value="@product.InvoiceID"
+                                           @(Html.Raw(product.Assigned ? "checked=\"checked\"" : "")) />
+                                    @: <strong>@product.Name</strong>
+                                @:</td>
+                                }
+                                else
+                                {
+                                @:<td>
+                                    <input style="margin:0px 0px 0px 60px"
+                                           type="checkbox"
+                                           name="selectedProducts"
+                                           value="@product.InvoiceID"
+                                           @(Html.Raw(product.Assigned ? "checked=\"checked\"" : "")) />
+                                    @: <strong>@product.Name</strong>
+                                @:</td>
+                                }
+                            @:<td style="margin:0px 100px 0px 100px">
+                                <strong style="margin:0px 0px 0px 30px">Quantity</strong>
+                                <input type="number"
+                                       name="quantity"
+                                       value="0">
+                            @:</td>
+                            }
                         }
-                   
+                        else
+                        {
+                            <div class="panel-body">
+                                <h3 style="color:red;">Empty!</h3>
+                            </div>
+                        }
+                    @:</tr>
                     }
                 </table>
             </div>

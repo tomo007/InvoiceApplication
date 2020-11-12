@@ -55,7 +55,7 @@ namespace InvoiceApplication.Controllers
         // GET: Invoice/Create
         public ActionResult Create()
         {
-            ViewBag.Drzave = GetTaxes();
+            ViewBag.Countries = GetTaxes();
             var invoice = new Invoice();
             invoice.Products = new List<Product>();
             PopulateProductOnListData(invoice);
@@ -67,7 +67,7 @@ namespace InvoiceApplication.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "InvoiceID,NumberOf,CreateDate,BillingDeadline,TotalPrice,TotalPriceWithTax,Buyer,Quantity")] Invoice invoice,string[] selectedProducts,string[] quantity,string drzava)
+        public ActionResult Create([Bind(Include = "InvoiceID,NumberOf,CreateDate,BillingDeadline,TotalPrice,TotalPriceWithTax,Buyer,Quantity")] Invoice invoice,string[] selectedProducts,string[] quantity,string country)
         {
             if (ModelState.IsValid)
             {
@@ -83,9 +83,8 @@ namespace InvoiceApplication.Controllers
                     invoice.TotalPrice = getTotalPrice(invoice.Products);
                 }
                 
-                invoice.TotalPriceWithTax =tax.CalculateTax(drzava, invoice.TotalPrice);
-
-       //         PopulateProductOnListData(invoice);
+                invoice.TotalPriceWithTax =tax.CalculateTax(country, invoice.TotalPrice);
+                invoice.CreateDate = DateTime.Now;
 
                 db.Invoices.Add(invoice);
                 db.SaveChanges();
@@ -196,6 +195,10 @@ namespace InvoiceApplication.Controllers
         }
         public List<Product> getSelectedProducts(string[] selectedProducts,string[] quantity) 
         {
+            //get id of first member in list of products to sync with quantity field
+            var firstProduct = db.Products.Find(int.Parse(selectedProducts[0]));
+            int FirstMemberInListId = firstProduct.ProductID;
+
             List<Product> productList= new List<Product>();
 
             foreach (var product in selectedProducts)
@@ -203,8 +206,8 @@ namespace InvoiceApplication.Controllers
                 var productToAdd = db.Products.Find(int.Parse(product));
                 if (quantity != null)
                 {
-                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID - 1]);
-                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID - 1]);
+                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID - FirstMemberInListId]);
+                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID - FirstMemberInListId]);
                     productToAdd.TotalPrice = productToAdd.Price * productToAdd.Quantity;
                 }
                 productList.Add(productToAdd);

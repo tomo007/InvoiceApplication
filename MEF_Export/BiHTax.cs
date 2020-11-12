@@ -8,7 +8,7 @@ using System.Web;
 namespace InvoiceApplication.MEF_Export
 {
     [Export(typeof(IOperation))]
-    [ExportMetadata("CountryName", "Bih")]
+    [ExportMetadata("CountryName", "BiH")]
     public class BiHTax : IOperation
     {
         public double Operate(double priceToOperate)
