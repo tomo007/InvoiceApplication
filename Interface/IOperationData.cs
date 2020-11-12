@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvoiceApplication.Interface
 {
-    interface IOperationData
+    public interface IOperationData
     {
         string CountryName { get;}
     }

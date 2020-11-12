@@ -143,3 +143,5 @@ C:\Users\tomis\Desktop\C# projekti\InvoiceApplication\bin\System.Threading.Tasks
 C:\Users\tomis\Desktop\C# projekti\InvoiceApplication\bin\System.ValueTuple.xml
 C:\Users\tomis\Desktop\C# projekti\InvoiceApplication\bin\System.Composition.Runtime.dll
 C:\Users\tomis\Desktop\C# projekti\InvoiceApplication\bin\System.Composition.Runtime.xml
+C:\Users\tomis\Desktop\C# projekti\InvoiceApplication\bin\Microsoft.ExtendedReflection.dll
+C:\Users\tomis\Desktop\C# projekti\InvoiceApplication\bin\Microsoft.ExtendedReflection.Reasoning.dll

@@ -1,77 +1,77 @@
 ﻿@model IEnumerable<InvoiceApplication.Models.Invoice>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-@if (Model.Count() != 0)
-{
+    <table class="table table-striped table-responsive">
+        <td> @Html.ActionLink("Create New", "Create")</td>
+    </table>
+        @if (Model.Count() != 0)
+        {
 
-    foreach (var item in Model)
-    {
-        <div class="panel-body">
-            <table class="table table-striped table-responsive">
-                <tbody>
-                    <tr>
-                    <tr>
-                        <td>Seller Name : @item.MyUser.FullName </td>
-                        <td>Buyer Name : @item.Buyer </td>
-                    </tr>
-                    <tr>
-                        <td>Address : @item.MyUser.Address </td>
-                    </tr>
-                    <tr>
-                        <td>Order Date : @item.CreateDate</td>
-                        <td>Billing deadline Date : @item.BillingDeadline</td>
-                    </tr>
-                    </tr>
+            foreach (var item in Model)
+            {
+                <div class="panel-body">
+                    <table class="table table-striped table-responsive">
+                        <tbody>
+                            <tr>
+                            <tr>
+                                <td>Seller Name : @item.MyUser.FullName </td>
+                                <td>Buyer Name : @item.Buyer </td>
+                            </tr>
+                            <tr>
+                                <td>Address : @item.MyUser.Address </td>
+                            </tr>
+                            <tr>
+                                <td>Order Date : @item.CreateDate</td>
+                                <td>Billing deadline Date : @item.BillingDeadline</td>
+                            </tr>
+                            </tr>
 
-                    <tr>
-                        <td colspan="3">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Unit Price</th>
-                                        <th>Total</th>
-                                    </tr>
-                                    @{
-                                        var totalBill = 0;
-                                    }
-                                    @if (item.Products != null)
-                                    {
-                                        foreach (var product in item.Products)
-                                        {
+                            <tr>
+                                <td colspan="3">
+                                    <table class="table table-bordered">
+                                        <tbody>
                                             <tr>
-                                                <td>@product.Name</td>
-                                                <td>@product.Quantity</td>
-                                                <td>@product.Price</td>
-                                                <td>@product.TotalPrice</td>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                                <th>Total</th>
                                             </tr>
-                                            totalBill = totalBill + @Convert.ToInt32(product.TotalPrice);
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                            <span class="pull-right" style="margin-right:100px;"><strong>Total Bill :  </strong> @item.TotalPrice</span>
-                            <span class="pull-right" style="margin-right:100px;"><strong>Total Bill With PDV :  </strong> @item.TotalPriceWithTax</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.InvoiceID }) |
-            @Html.ActionLink("Details", "Details", new { id = item.InvoiceID }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.InvoiceID })
-        </td>
-    }
-}
-else
-{
-    <div class="panel-body">
-        <h3 style="color:red;">Empty!</h3>
-    </div>
+                                            @{
+                                                var totalBill = 0;
+                                            }
+                                            @if (item.Products != null)
+                                            {
+                                                foreach (var product in item.Products)
+                                                {
+                                                    <tr>
+                                                        <td>@product.Name</td>
+                                                        <td>@product.Quantity</td>
+                                                        <td>@product.Price</td>
+                                                        <td>@product.TotalPrice</td>
+                                                    </tr>
+                                                    totalBill = totalBill + @Convert.ToInt32(product.TotalPrice);
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <span class="pull-right" style="margin-right:100px;"><strong>Total Bill :  </strong> @item.TotalPrice</span>
+                                    <span class="pull-right" style="margin-right:100px;"><strong>Total Bill With PDV :  </strong> @item.TotalPriceWithTax</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.InvoiceID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.InvoiceID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.InvoiceID })
+                </td>
+            }
+        }
+        else
+        {
+            <div class="panel-body">
+                <h3 style="color:red;">Empty!</h3>
+            </div>
 
-}
-</div>
+        }
+        </div>

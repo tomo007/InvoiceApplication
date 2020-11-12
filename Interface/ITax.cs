@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace InvoiceApplication.Interface
 {
-    interface ITax
+    public interface ITax
     {
+        IEnumerable<Lazy<IOperation, IOperationData>> Operations { get;  }
         double CalculateTax(string countryName, double priceToCalculate);
     }
 }

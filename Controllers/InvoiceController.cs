@@ -1,13 +1,16 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using InvoiceApplication.DAL;
+using InvoiceApplication.Interface;
 using InvoiceApplication.Models;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -18,6 +21,8 @@ namespace InvoiceApplication.Controllers
     public class InvoiceController : Controller
 
     {
+        [Import(typeof(ITax))]
+        ITax tax;
 
         private InvoiceContext db = new InvoiceContext();
         protected ApplicationDbContext ApplicationDbContext { get; set; }
@@ -50,6 +55,7 @@ namespace InvoiceApplication.Controllers
         // GET: Invoice/Create
         public ActionResult Create()
         {
+            ViewBag.Drzave = GetTaxes();
             var invoice = new Invoice();
             invoice.Products = new List<Product>();
             PopulateProductOnListData(invoice);
@@ -61,40 +67,26 @@ namespace InvoiceApplication.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "InvoiceID,NumberOf,CreateDate,BillingDeadline,TotalPrice,TotalPriceWithTax,Buyer,Quantity")] Invoice invoice,string[] selectedProducts,string[] quantity)
+        public ActionResult Create([Bind(Include = "InvoiceID,NumberOf,CreateDate,BillingDeadline,TotalPrice,TotalPriceWithTax,Buyer,Quantity")] Invoice invoice,string[] selectedProducts,string[] quantity,string drzava)
         {
-            if (selectedProducts != null)
-            {
-                
-                invoice.Products = new List<Product>();
-                             
-                foreach (var product in selectedProducts)
-                {
-                    var productToAdd = db.Products.Find(int.Parse(product));
-                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID-1]);
-                    productToAdd.TotalPrice = productToAdd.Quantity * productToAdd.Price;
-                    invoice.Products.Add(productToAdd);
-                }
-            }
-
             if (ModelState.IsValid)
             {
-                this.ApplicationDbContext = new ApplicationDbContext();
-                this.UserManager = new Microsoft.AspNet.Identity.UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ApplicationDbContext));
-                ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
-                
-                invoice.MyUser = new MyUser { UserName=user.UserName,Address = user.Address, FullName = user.FullName,Email=user.Email };
-       
+                invoice.MyUser = getMyUser();
+
+                if (selectedProducts != null)
+                {
+                    invoice.Products = getSelectedProducts(selectedProducts, quantity);
+                }
+
                 if (invoice.Products != null)
                 {
-                    foreach (Product product in invoice.Products)
-                    {
-                        invoice.TotalPrice += product.TotalPrice;
-                    }
+                    invoice.TotalPrice = getTotalPrice(invoice.Products);
                 }
                 
-               // invoice.TotalPriceWithTax =this.CalculateTax("Hr", invoice.TotalPrice);
-                PopulateProductOnListData(invoice);
+                invoice.TotalPriceWithTax =tax.CalculateTax(drzava, invoice.TotalPrice);
+
+       //         PopulateProductOnListData(invoice);
+
                 db.Invoices.Add(invoice);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -193,35 +185,50 @@ namespace InvoiceApplication.Controllers
             }
             ViewBag.Products = viewModel;
         }
-        private void UpdateInvoiceProducts(string[] selectedProducts, Invoice invoiceToUpdate)
+
+        public MyUser getMyUser()
         {
-            if (selectedProducts == null)
-            {
-                invoiceToUpdate.Products = new List<Product>();
-                return;
-            }
+            this.ApplicationDbContext = new ApplicationDbContext();
+            this.UserManager = new Microsoft.AspNet.Identity.UserManager<ApplicationUser>(new UserStore<ApplicationUser>(this.ApplicationDbContext));
+            ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
 
-            var selectedCoursesHS = new HashSet<string>(selectedProducts);
-            var invoiceProducts = new HashSet<int>
-                (invoiceToUpdate.Products.Select(c => c.ProductID));
+            return new MyUser { UserName = user.UserName, Address = user.Address, FullName = user.FullName, Email = user.Email };
+        }
+        public List<Product> getSelectedProducts(string[] selectedProducts,string[] quantity) 
+        {
+            List<Product> productList= new List<Product>();
 
-            foreach (var product in db.Products)
+            foreach (var product in selectedProducts)
             {
-                if (selectedCoursesHS.Contains(product.ProductID.ToString()))
+                var productToAdd = db.Products.Find(int.Parse(product));
+                if (quantity != null)
                 {
-                    if (!invoiceProducts.Contains(product.ProductID))
-                    {
-                        invoiceToUpdate.Products.Add(product);
-                    }
+                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID - 1]);
+                    productToAdd.Quantity = Convert.ToInt32(quantity[productToAdd.ProductID - 1]);
+                    productToAdd.TotalPrice = productToAdd.Price * productToAdd.Quantity;
                 }
-                else
-                {
-                    if (invoiceProducts.Contains(product.ProductID))
-                    {
-                        invoiceToUpdate.Products.Remove(product);
-                    }
-                }
+                productList.Add(productToAdd);
             }
+            return productList;
+        }
+        public double getTotalPrice(ICollection<Product> products)
+        {
+            double totalPrice = 0;
+            foreach (Product product in products)
+            {
+                totalPrice += product.TotalPrice;
+            }
+            return totalPrice;
+        }
+     public List<string>  GetTaxes()
+        {
+            List<string> popis = new List<string>();
+          
+            foreach (var item in tax.Operations)
+            {
+                popis.Add(item.Metadata.CountryName);
+            }
+            return popis;
         }
     }
 }

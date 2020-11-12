@@ -47,11 +47,17 @@
             @Html.ValidationMessageFor(model => model.Buyer, "", new { @class = "text-danger" })
         </div>
     </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">Drzava</label>
+        <div class="col-md-10">
+            @Html.DropDownList("drzava", new SelectList((List<string>)ViewBag.Drzave), new { @class = "form-control" })
+        </div>
+    </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <table>
-                <tr>
+            <table >
+                
                     @{
 
                         int cnt = 0;
@@ -59,27 +65,30 @@
 
                         foreach (var product in products)
                         {
-                            if (cnt++ % 4 != 0)
-                            {
-                            @:</tr>
-                               
-                            @:<tr>
-                            }
-                            @:<td>
-                                <input type="checkbox"
-                                       name="selectedProducts"
-                                       value="@product.InvoiceID"
-                                       @(Html.Raw(product.Assigned ? "checked=\"checked\"" : "")) />
-                                @product.Name
-                            @:</td>
-                            @: <td>
-                                <input type="number"
-                                       name="quantity"
-                                       value="@product.Quantity">
+                            
+                                    @:<tr style="margin:2.5em" >
+                                        @:
+                                          @:<td>
+                                              <input type="checkbox"
+                                                     name="selectedProducts"
+                                                     value="@product.InvoiceID"
+                                                     @(Html.Raw(product.Assigned ? "checked=\"checked\"" : "")) />
+                                             @: <strong>@product.Name</strong>
 
-                            @: </td>
+                                             
+                                          @:</td>
+                                    @:</tr>
+                                    @:<tr style="margin:2.5em" >
+                                        @:<td >
+                                            <p>Quantity</p>
+                                            <input type="number"
+                                            name="quantity"
+                                            value="0" >
+                                        @:</td>
+                                    @:</tr>
+                                  
                         }
-                    @:</tr>
+                   
                     }
                 </table>
             </div>
